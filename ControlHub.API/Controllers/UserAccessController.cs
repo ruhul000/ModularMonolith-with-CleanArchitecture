@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using UserAccess.Application.Services;
 using UserAccess.Domain.Models;
 
@@ -7,11 +8,11 @@ namespace ControlHub.API.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}")]
     [ApiVersion("1.0")]
-    public class UserController : ControllerBase
+    public class UserAccessController : ControllerBase
     {
         private IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserAccessController(IUserService userService)
         {
             _userService = userService;
         }

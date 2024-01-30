@@ -11,13 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{0879FA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserAccess", "UserAccess", "{01532B35-72A2-4431-A024-56F1A22B105A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helper", "Helper\Helper.csproj", "{1F457F95-6445-4612-A37D-0E921780A90B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helper", "ControlHub.Modules\Common\Helper\Helper.csproj", "{1F457F95-6445-4612-A37D-0E921780A90B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Application", "UserAccess.Application\UserAccess.Application.csproj", "{BC96F32B-88C5-4A25-9A2B-D821F4ADC8D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Application", "ControlHub.Modules\UserAccess\UserAccess.Application\UserAccess.Application.csproj", "{BC96F32B-88C5-4A25-9A2B-D821F4ADC8D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Domain", "UserAccess.Domain\UserAccess.Domain.csproj", "{50FAA212-840C-4E00-97FD-7604FD76960C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Domain", "ControlHub.Modules\UserAccess\UserAccess.Domain\UserAccess.Domain.csproj", "{50FAA212-840C-4E00-97FD-7604FD76960C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Infrastructure", "UserAccess.Infrustracture\UserAccess.Infrastructure.csproj", "{74FE1BC9-BCD0-4D79-8BBC-27310E7A8493}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Infrastructure", "ControlHub.Modules\UserAccess\UserAccess.Infrustracture\UserAccess.Infrastructure.csproj", "{74FE1BC9-BCD0-4D79-8BBC-27310E7A8493}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

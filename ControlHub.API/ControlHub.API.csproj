@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UserAccess.Application\UserAccess.Application.csproj" />
-    <ProjectReference Include="..\UserAccess.Domain\UserAccess.Domain.csproj" />
+    <ProjectReference Include="..\ControlHub.Modules\Common\Helper\Helper.csproj" />
+    <ProjectReference Include="..\ControlHub.Modules\UserAccess\UserAccess.Application\UserAccess.Application.csproj" />
+    <ProjectReference Include="..\ControlHub.Modules\UserAccess\UserAccess.Domain\UserAccess.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,8 +5,8 @@ namespace UserAccess.Infrastructure.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly UserContext _context;
-        public UserRepository(UserContext context)
+        private readonly UserAccessDBContext _context;
+        public UserRepository(UserAccessDBContext context)
         {
             _context = context;
         }

@@ -15,17 +15,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 //
-builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ControlHubDBConnectionString")));
+var connectionString = builder.Configuration.GetConnectionString("ControlHubDBConnectionString");
 
+builder.Services.AddDbContext<UserAccessDBContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options => {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
-
-// Configure Autor Mapper
-builder.Services.AddAutoMapper(typeof(Program));
-//builder.Services.AddScoped(typeof(IMappingFactory<>), typeof(MappingFactory<>));
 
 // Add Modules services
 builder.Services.AddHelper()

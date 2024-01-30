@@ -3,9 +3,9 @@ using UserAccess.Infrastructure.Dtos;
 
 namespace UserAccess.Infrastructure
 {
-    public class UserContext : DbContext
+    public class UserAccessDBContext : DbContext
     {
-        public UserContext(DbContextOptions<UserContext> options) : base(options)
+        public UserAccessDBContext(DbContextOptions<UserAccessDBContext> options) : base(options)
         {
         }
 

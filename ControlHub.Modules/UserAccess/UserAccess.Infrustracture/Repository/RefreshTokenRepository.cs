@@ -4,8 +4,8 @@ namespace UserAccess.Infrastructure.Repository
 {
     public class RefreshTokenRepository : IRefreshTokenRepository
     {
-        private readonly UserContext _context;
-        public RefreshTokenRepository(UserContext context)
+        private readonly UserAccessDBContext _context;
+        public RefreshTokenRepository(UserAccessDBContext context)
         {
             _context = context;
         }
