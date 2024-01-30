@@ -1,0 +1,6 @@
+@ControlHub.API_HostAddress = http://localhost:5087
+
+GET {{ControlHub.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
