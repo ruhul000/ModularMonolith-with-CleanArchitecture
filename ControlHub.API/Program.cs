@@ -14,22 +14,22 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//
+// Configure DbContext
 var connectionString = builder.Configuration.GetConnectionString("ControlHubDBConnectionString");
 
 builder.Services.AddDbContext<UserAccessDBContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(options => {
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 
-// Add Modules services
+// Add Modules services collections
 builder.Services.AddHelper()
                 .AddUserAccessDomain()
                 .AddUserAccessApplication()
                 .AddUserAccessInfrastructure();
-
 
 // Configure API Version
 builder.Services.AddApiVersioning(opt =>
@@ -37,9 +37,9 @@ builder.Services.AddApiVersioning(opt =>
     opt.DefaultApiVersion = new ApiVersion(1, 0);
     opt.AssumeDefaultVersionWhenUnspecified = true;
     opt.ReportApiVersions = true;
-    opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-                                                    new HeaderApiVersionReader("x-api-version"),
-                                                    new MediaTypeApiVersionReader("x-api-version"));
+    opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader());
+    //new HeaderApiVersionReader("x-api-version"),
+    //new MediaTypeApiVersionReader("x-api-version"));
 });
 
 // Add ApiExplorer to discover versions
@@ -75,6 +75,7 @@ builder.Services.AddSwaggerGen(c => {
         }
     });
 });
+
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 // Configure JWT Validation

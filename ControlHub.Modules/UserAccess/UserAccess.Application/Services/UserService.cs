@@ -5,7 +5,7 @@ using System.Text;
 using UserAccess.Domain.Factories;
 using UserAccess.Domain.Models;
 using UserAccess.Infrastructure.Dtos;
-using UserAccess.Infrastructure.Repository;
+using UserAccess.Infrastructure.Repositories;
 
 namespace UserAccess.Application.Services
 {
@@ -14,25 +14,23 @@ namespace UserAccess.Application.Services
         private const int SALTLENGTH = 32;
 
         private readonly IConfiguration _configuration;
-        private readonly IUserFactory _userFactory;
-        private readonly IUserRepository _userRepository;
         private readonly IAuthenticationService _authenticationService;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IUserFactory _userFactory;
+        private readonly IUnitOfWork _uowRepository;
 
-        public UserService(IConfiguration configuration, IUserRepository userRepository, IUserFactory userFactory, IAuthenticationService authenticationService, IRefreshTokenRepository refreshTokenRepository)
+        public UserService(IConfiguration configuration, IAuthenticationService authenticationService, IUserFactory userFactory, IUnitOfWork uowRepository)
         {
             _configuration = configuration;
-            _userRepository = userRepository;
-            _userFactory = userFactory;
             _authenticationService = authenticationService;
-            _refreshTokenRepository = refreshTokenRepository;
+            _userFactory = userFactory;
+            _uowRepository = uowRepository;
         }
 
         public async Task<UserResponse> Registration(UserRequest userRequest)
         {
             UserResponse? response = null;
 
-            var userDto = _userRepository.GetByUserName(userRequest.UserName).Result;
+            var userDto = await _uowRepository.UserRepository.GetByUserName(userRequest.UserName);
 
             if (userDto != null) return response;
 
@@ -51,12 +49,14 @@ namespace UserAccess.Application.Services
 
             userDto = _userFactory.CreateFrom(user);
 
-            if (!_userRepository.Add(userDto).Result)
+            _uowRepository.UserRepository.Add(userDto);
+
+            if (await _uowRepository.SaveAsync())
             {
                 return response;
             }
 
-            await _userRepository.GetById(userDto.UserId);
+            //await _uowRepository.UserRepository.GetById(userDto.UserId);
 
             return _userFactory.CreateResponseFrom(userDto);
 
@@ -65,14 +65,14 @@ namespace UserAccess.Application.Services
         {
             AuthInformation authInfo = new AuthInformation();
 
-            User user = VerifyUser(loginRequest);
+            User user = await VerifyUser(loginRequest);
 
             if (user == null) return authInfo;
 
             authInfo.Token = _authenticationService.GenerateJWT(user);
-            authInfo.RefreshToken = _authenticationService.GenerateRefreshToken(user.UserName);
+            authInfo.RefreshToken = _authenticationService.GenerateRefreshToken();
 
-            SaveRefreshToken(user.UserName, authInfo.RefreshToken);
+            await SaveRefreshToken(user.UserName, authInfo.RefreshToken);
 
             return authInfo;
         }
@@ -80,56 +80,39 @@ namespace UserAccess.Application.Services
         {
             AuthInformation refreshToken = new AuthInformation();
 
-            // Validate Token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtSettings = _configuration.GetSection("JWTSettings").Get<JWTSettings>();
-            SecurityToken validatedToken;
-
-            var principal = tokenHandler.ValidateToken(authInfo.Token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
-            }, out validatedToken);
-
-
-            var _token = validatedToken as JwtSecurityToken;
-
-            if (_token != null && !_token.Header.Alg.Equals(SecurityAlgorithms.HmacSha256))
+            // Get principal after token validation        
+            var principal = _authenticationService.GetPrincipalFromTokenValidation(authInfo.Token);
+            
+            if (principal?.Identity?.Name is null)
             {
                 return refreshToken;
             }
 
-            var username = principal.Claims.Where(c => c.Type == "UserName")
-                   .Select(c => c.Value).SingleOrDefault();
+            var username = principal.Identity.Name;
 
-            var refreshTokenDto = _refreshTokenRepository.Get(username, authInfo.RefreshToken).Result;
+            var refreshTokenDto = await _uowRepository.RefreshTokenRepository.GetByUserName(username);
 
             if (refreshTokenDto == null)
             {
                 return refreshToken;
             }
 
-            var userDto = await _userRepository.GetByUserName(username);
+            var userDto = await _uowRepository.UserRepository.GetByUserName(username);
 
             refreshToken.Token = _authenticationService.GenerateJWT(_userFactory.CreateFrom(userDto));
-            refreshToken.RefreshToken = _authenticationService.GenerateRefreshToken(username);
+            refreshToken.RefreshToken = _authenticationService.GenerateRefreshToken();
 
-            SaveRefreshToken(username, refreshToken.RefreshToken);
+            await SaveRefreshToken(username, refreshToken.RefreshToken);
 
             return refreshToken;
         }
-        private User VerifyUser(UserLoginRequest loginRequest)
+        private async Task<User> VerifyUser(UserLoginRequest loginRequest)
         {
             User? response = null;
 
-            var userDto = _userRepository.GetByUserName(loginRequest.UserName).Result;
+            var userDto = await _uowRepository.UserRepository.GetByUserName(loginRequest.UserName);
 
-            if (userDto == null) return response;
+            if (userDto == null) return null;
 
             var passwordHash = _authenticationService.EncryptPassword(loginRequest.Password, userDto.Salt);
 
@@ -140,18 +123,28 @@ namespace UserAccess.Application.Services
 
             return response;
         }
-        private void SaveRefreshToken(string username, string refreshToken)
+        private async Task<bool> SaveRefreshToken(string username, string refreshToken)
         {
-            RefreshTokenDto refreshTokenDto = new RefreshTokenDto
+            var refreshTokenDto = await _uowRepository.RefreshTokenRepository.GetByUserName(username);
+
+            if(refreshTokenDto != null)
             {
-                UserName = username,
-                TokenID = new Random().Next().ToString(),
-                RefreshToken = refreshToken,
-                IsActive = true
-            };
+                refreshTokenDto.RefreshToken = refreshToken;
+            }
+            else
+            {
+                RefreshTokenDto newRefreshTokenDto = new RefreshTokenDto
+                {
+                    UserName = username,
+                    TokenID = new Random().Next().ToString(),
+                    RefreshToken = refreshToken,
+                    IsActive = true
+                };
 
-            _refreshTokenRepository.Save(refreshTokenDto);
+                _uowRepository.RefreshTokenRepository.Add(newRefreshTokenDto);
+            }
 
+           return await _uowRepository.SaveAsync();
         }
 
     }

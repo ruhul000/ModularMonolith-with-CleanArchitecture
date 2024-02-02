@@ -47,7 +47,7 @@ namespace ControlHub.API
         {
             var info = new OpenApiInfo()
             {
-                Title = "Insurance Management Web API",
+                Title = "Control Hub API",
                 Version = desc.ApiVersion.ToString()
             };
 

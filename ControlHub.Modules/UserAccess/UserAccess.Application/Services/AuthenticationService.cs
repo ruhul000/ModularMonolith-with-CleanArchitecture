@@ -49,7 +49,8 @@ namespace UserAccess.Application.Services
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.Sub, jwtSettings.Subject),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()),
+                new Claim(ClaimTypes.Name, user.UserName),
                 new Claim("UserId", user.UserId.ToString()),
                 new Claim("FullName", user.FullName),
                 new Claim("UserName", user.UserName),
@@ -69,14 +70,33 @@ namespace UserAccess.Application.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public string GenerateRefreshToken(string username)
+        public string GenerateRefreshToken()
         {
-            var randomNumber = new byte[32];
+            var randomNumber = new byte[64];
             using (var randomNumberGenerator = RandomNumberGenerator.Create())
             {
                 randomNumberGenerator.GetBytes(randomNumber);
                 return Convert.ToBase64String(randomNumber);
             }
+        }
+
+        public ClaimsPrincipal? GetPrincipalFromTokenValidation(string accessToken)
+        {
+            // Validate Token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtSettings = _configuration.GetSection("JWTSettings").Get<JWTSettings>();
+
+            return tokenHandler.ValidateToken(accessToken, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+            }, out _);
+
         }
     }
 }

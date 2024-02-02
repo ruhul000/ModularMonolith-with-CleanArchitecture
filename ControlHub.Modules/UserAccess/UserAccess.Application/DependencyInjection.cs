@@ -9,6 +9,7 @@ namespace UserAccess.Application
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
+            
             return services;
         }
     }

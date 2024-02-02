@@ -7,7 +7,7 @@ namespace ControlHub.API.Controllers
 {
     [ApiController]
     [Route("api/v{version:apiVersion}")]
-    [ApiVersion("1.0")]
+    [ApiVersion("1")]
     public class UserAccessController : ControllerBase
     {
         private IUserService _userService;
@@ -18,7 +18,7 @@ namespace ControlHub.API.Controllers
         }
 
         [HttpPost("Register")]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1")]
         public ActionResult<UserResponse> Registration(UserRequest userRequest)
         {
             UserResponse? response;
@@ -39,7 +39,7 @@ namespace ControlHub.API.Controllers
         }
 
         [HttpPost("Login")]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1")]
         public ActionResult<AuthInformation> UserLogin(UserLoginRequest userLoginRequest)
         {
             AuthInformation response;
@@ -47,7 +47,7 @@ namespace ControlHub.API.Controllers
             {
                 response = _userService.UserLogin(userLoginRequest).Result;
 
-                if (response.Token.IsNullOrEmpty() && response.RefreshToken.IsNullOrEmpty())
+                if (response.Token.IsNullOrEmpty() || response.RefreshToken.IsNullOrEmpty())
                 {
                     return Unauthorized();
                 }
@@ -60,7 +60,7 @@ namespace ControlHub.API.Controllers
         }
 
         [HttpPost("Refresh")]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1")]
         public ActionResult<AuthInformation> RefreshToken(AuthInformation authInfo)
         {
             AuthInformation response;

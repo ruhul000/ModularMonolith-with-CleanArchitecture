@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using UserAccess.Infrastructure.Repository;
+﻿using Microsoft.Extensions.DependencyInjection;
+using UserAccess.Infrastructure.Repositories;
 
 namespace UserAccess.Infrastructure
 {
@@ -8,9 +7,10 @@ namespace UserAccess.Infrastructure
     {
         public static IServiceCollection AddUserAccessInfrastructure(this IServiceCollection services)
         {
+            //Repositories
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
             return services;
         }
     }

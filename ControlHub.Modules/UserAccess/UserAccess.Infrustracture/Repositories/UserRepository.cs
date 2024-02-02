@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserAccess.Infrastructure.Dtos;
+using UserAccess.Infrastructure.Repositories;
 
-namespace UserAccess.Infrastructure.Repository
+namespace UserAccess.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -15,18 +16,17 @@ namespace UserAccess.Infrastructure.Repository
         {
             return await _context.Users.ToListAsync();
         }
-        public async Task<UserDto> GetById(int id)
+        public async Task<UserDto?> GetById(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(obj => obj.UserId == id);
         }
-        public async Task<UserDto> GetByUserName(string username)
+        public async Task<UserDto?> GetByUserName(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(obj => obj.UserName == username || obj.Email == username);
         }
-        public async Task<bool> Add(UserDto userDto)
+        public async void Add(UserDto userDto)
         {
             _context.Users.Add(userDto);
-            return (await _context.SaveChangesAsync() > 0);
         }
     }
 }
