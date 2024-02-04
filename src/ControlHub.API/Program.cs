@@ -11,6 +11,8 @@ using UserAccess.Application;
 using UserAccess.Domain;
 using UserAccess.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using ControlHub.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ControlHubDBConnectionString");
 
 builder.Services.AddDbContext<UserAccessDBContext>(options => options.UseSqlServer(connectionString));
+
+// Configure Logger
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
+
+// Configure Middleware
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -98,16 +106,19 @@ var app = builder.Build();
 var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
 
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
     {
-        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-        {
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                description.GroupName.ToUpperInvariant());
-        }
-    });
+        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+            description.GroupName.ToUpperInvariant());
+    }
+});
 
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

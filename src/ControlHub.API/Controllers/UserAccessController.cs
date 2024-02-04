@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Serilog;
 using UserAccess.Application.Services;
 using UserAccess.Domain.Models;
 
@@ -10,10 +12,11 @@ namespace ControlHub.API.Controllers
     [ApiVersion("1")]
     public class UserAccessController : ControllerBase
     {
+        private ILogger<UserAccessController> _logger;
         private IUserService _userService;
-
-        public UserAccessController(IUserService userService)
+        public UserAccessController(ILogger<UserAccessController> logger, IUserService userService)
         {
+            _logger = logger;
             _userService = userService;
         }
 
@@ -28,13 +31,18 @@ namespace ControlHub.API.Controllers
 
                 if (response == null)
                 {
+                    _logger.LogError("Error: {Error}, {@DateTimeUtc}", BadRequest(), DateTime.UtcNow);
+
                     return BadRequest("User registration failed!");
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
+                return BadRequest("User registration failed!");
             }
+
+
             return Ok(response);
         }
 
@@ -49,11 +57,13 @@ namespace ControlHub.API.Controllers
 
                 if (response.Token.IsNullOrEmpty() || response.RefreshToken.IsNullOrEmpty())
                 {
+                    _logger.LogError("Error: {Error}, {@DateTimeUtc}", BadRequest(), DateTime.UtcNow);
                     return Unauthorized();
                 }
             }
             catch (Exception ex)
             {
+                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
                 return BadRequest(ex.Message);
             }
             return Ok(response);
@@ -70,11 +80,13 @@ namespace ControlHub.API.Controllers
 
                 if (response.Token.IsNullOrEmpty() && response.RefreshToken.IsNullOrEmpty())
                 {
+                    _logger.LogError("Error: {Error}, {@DateTimeUtc}", Unauthorized(), DateTime.UtcNow);
                     return Unauthorized();
                 }
             }
             catch (Exception ex)
             {
+                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
                 return BadRequest(ex.Message);
             }
             return Ok(response);
