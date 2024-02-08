@@ -90,7 +90,7 @@ Before running the project, ensure you have the following installed:
 
 #### **GETTING STARTED**
 1. Clone the repository:
-    <pre>[git clone https://github.com/yourusername/ControlHub.git](https://github.com/ruhul000/ControlHub.API.git)</pre>
+    <pre>git clone https://github.com/ruhul000/ControlHub.API.git</pre>
 2. Set up your database connection string in **appsettings.json** or **appsettings.Development.json** files.
 3. Navigate to the **SqlScript** directory and run **DataBaseScript.sql**, **Sproc.sql**, **Seed.sql**.
 4. Navigate to the **ControlHub.API **directory and run the project.
