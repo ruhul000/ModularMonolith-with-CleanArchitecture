@@ -9,6 +9,7 @@ namespace UserAccess.Domain.Factories.FactoryMapper
         public UserProfile()
         {
             CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<UserDto, UserResponse>().ReverseMap();
         }
     }
 }

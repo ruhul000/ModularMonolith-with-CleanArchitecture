@@ -9,6 +9,7 @@ namespace UserAccess.Application.Services
         string EncryptPassword(string password, string salt);
         string GenerateJWT(User user);
         string GenerateRefreshToken();
+        string GenerateUniqueToken();
         ClaimsPrincipal? GetPrincipalFromTokenValidation(string accessToken);
     }
 }

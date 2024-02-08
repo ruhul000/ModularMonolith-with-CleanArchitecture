@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Helper.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Helper
 {
@@ -6,6 +7,7 @@ namespace Helper
     {
         public static IServiceCollection AddHelper(this IServiceCollection services)
         {
+            services.AddScoped<IEmailSender, EmailSender>();
             return services;
         }
     }

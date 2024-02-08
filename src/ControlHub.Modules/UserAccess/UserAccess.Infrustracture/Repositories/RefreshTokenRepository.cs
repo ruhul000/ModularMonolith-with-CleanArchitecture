@@ -11,15 +11,11 @@ namespace UserAccess.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<RefreshTokenDto?> GetByUserName(String username)
-        {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(obj => obj.UserName == username);
-        }
+        public async Task<RefreshTokenDto?> GetByUserName(String username) 
+            => await _context.RefreshTokens.FirstOrDefaultAsync(obj => obj.UserName == username);
 
-        public void Add(RefreshTokenDto refreshTokenDto)
-        {
-            _context.RefreshTokens.Add(refreshTokenDto);
-        }
+        public void Add(RefreshTokenDto refreshTokenDto) 
+            => _context.RefreshTokens.AddAsync(refreshTokenDto);
 
     }
 }

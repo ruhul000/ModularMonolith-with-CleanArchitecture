@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using UserAccess.Domain.Factories;
 using UserAccess.Domain.Factories.FactoryMapper;
+using UserAccess.Domain.Models;
 
 namespace UserAccess.Domain
 {

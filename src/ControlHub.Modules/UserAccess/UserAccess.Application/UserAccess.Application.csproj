@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Helper\Helper.csproj" />
     <ProjectReference Include="..\UserAccess.Domain\UserAccess.Domain.csproj" />
     <ProjectReference Include="..\UserAccess.Infrustracture\UserAccess.Infrastructure.csproj" />
   </ItemGroup>

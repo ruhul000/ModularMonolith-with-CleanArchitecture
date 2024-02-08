@@ -25,22 +25,13 @@ namespace UserAccess.Application.Services
         }
         public string EncryptPassword(string password, string salt)
         {
-            string hash = null;
-            try
-            {
-                var saltBytes = Convert.FromBase64String(salt);
+            var saltBytes = Convert.FromBase64String(salt);
 
-                using (var rfcbytes = new Rfc2898DeriveBytes(password, saltBytes, ITERATIONS))
-                {
-                    hash = Convert.ToBase64String(rfcbytes.GetBytes(256));
-                }
-            }
-            catch (Exception ex)
+            using (var rfcbytes = new Rfc2898DeriveBytes(password, saltBytes, ITERATIONS, HashAlgorithmName.SHA256))
             {
-                throw;
+                return Convert.ToBase64String(rfcbytes.GetBytes(256));
             }
 
-            return hash;
         }
         public string GenerateJWT(User user)
         {
@@ -79,7 +70,10 @@ namespace UserAccess.Application.Services
                 return Convert.ToBase64String(randomNumber);
             }
         }
-
+        public string GenerateUniqueToken()
+        {
+            return Guid.NewGuid().ToString("N");
+        }
         public ClaimsPrincipal? GetPrincipalFromTokenValidation(string accessToken)
         {
             // Validate Token

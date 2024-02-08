@@ -1,6 +1,6 @@
-﻿
-using System.Net;
+﻿using System.Net;
 using System.Text;
+using Helper;
 
 namespace ControlHub.API.Middleware
 {
@@ -26,12 +26,13 @@ namespace ControlHub.API.Middleware
                 await next(context);
             }
             catch (Exception ex) {
-                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}", 
+                _logger.LogError("Exception: {Message}, {InnerException}, {Exception}", 
                     ex.Message, 
                     ex.InnerException, 
                     ex);
 
                 context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+
             }
         }
 

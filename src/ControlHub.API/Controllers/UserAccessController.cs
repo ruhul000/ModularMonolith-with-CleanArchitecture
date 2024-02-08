@@ -22,61 +22,46 @@ namespace ControlHub.API.Controllers
 
         [HttpPost("Register")]
         [MapToApiVersion("1")]
-        public ActionResult<UserResponse> Registration(UserRequest userRequest)
+        public async Task<ActionResult> Registration(UserRequest userRequest)
         {
-            UserResponse? response;
-            try
-            {
-                response = _userService.Registration(userRequest).Result;
+            var result = await _userService.Registration(userRequest);
 
-                if (response == null)
-                {
-                    _logger.LogError("Error: {Error}, {@DateTimeUtc}", BadRequest(), DateTime.UtcNow);
-
-                    return BadRequest("User registration failed!");
-                }
-            }
-            catch (Exception ex)
+            if (result.IsFailure)
             {
-                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
-                return BadRequest("User registration failed!");
+                
+                _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
+
+                return BadRequest(result);
             }
 
-
-            return Ok(response);
+            return Ok(result);
         }
 
         [HttpPost("Login")]
         [MapToApiVersion("1")]
-        public ActionResult<AuthInformation> UserLogin(UserLoginRequest userLoginRequest)
+        public async Task<ActionResult> UserLogin(UserLoginRequest userLoginRequest)
         {
-            AuthInformation response;
-            try
-            {
-                response = _userService.UserLogin(userLoginRequest).Result;
+            var result = await _userService.UserLogin(userLoginRequest);
 
-                if (response.Token.IsNullOrEmpty() || response.RefreshToken.IsNullOrEmpty())
-                {
-                    _logger.LogError("Error: {Error}, {@DateTimeUtc}", BadRequest(), DateTime.UtcNow);
-                    return Unauthorized();
-                }
-            }
-            catch (Exception ex)
+            if (result.IsFailure)
             {
-                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
-                return BadRequest(ex.Message);
+
+                _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
+
+                return BadRequest(result);
             }
-            return Ok(response);
+
+            return Ok(result);
         }
 
         [HttpPost("Refresh")]
         [MapToApiVersion("1")]
-        public ActionResult<AuthInformation> RefreshToken(AuthInformation authInfo)
+        public async Task<ActionResult<AuthInformation>> RefreshToken(AuthInformation authInfo)
         {
             AuthInformation response;
             try
             {
-                response = _userService.RefreshToken(authInfo).Result;
+                response = await _userService.RefreshToken(authInfo);
 
                 if (response.Token.IsNullOrEmpty() && response.RefreshToken.IsNullOrEmpty())
                 {
@@ -86,10 +71,61 @@ namespace ControlHub.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Exception: {Message}, {InnerException}, {Trace}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
+                _logger.LogError("Exception: {Message}, {InnerException}, {Exception}, {DateTimeUtc}", ex.Message, ex.InnerException, ex, DateTime.UtcNow);
                 return BadRequest(ex.Message);
             }
             return Ok(response);
+        }
+
+        [HttpGet("VerifyEmail")]
+        [MapToApiVersion("1")]
+        public async Task<ActionResult> VerifyEmailAddress(string verificationToken)
+        {
+            var result = await _userService.VerifyEmailAddress(verificationToken);
+
+            if (result.IsFailure)
+            {
+
+                _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
+
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("ForgotPassword")]
+        [MapToApiVersion("1")]
+        public async Task<ActionResult> ForgotPassword(string email)
+        {
+            var result = await _userService.ForgotPassword(email);
+
+            if (result.IsFailure)
+            {
+
+                _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
+
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("ResetPassword")]
+        [MapToApiVersion("1")]
+        public async Task<ActionResult> ResetPassword(string passwordResetToken, string newPassword)
+        {
+            var result = await _userService.ResetPassword(passwordResetToken, newPassword);
+
+            if (result.IsFailure)
+            {
+
+                _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
+
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
     }

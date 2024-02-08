@@ -4,8 +4,11 @@ namespace UserAccess.Application.Services
 {
     public interface IUserService
     {
-        Task<UserResponse> Registration(UserRequest userRequest);
-        Task<AuthInformation> UserLogin(UserLoginRequest loginRequest);
+        Task<Result<string>> Registration(UserRequest userRequest);
+        Task<Result<AuthInformation>> UserLogin(UserLoginRequest loginRequest);
         Task<AuthInformation> RefreshToken(AuthInformation authInfo);
+        Task<Result<string>> VerifyEmailAddress(string verificationToken);
+        Task<Result<string>> ForgotPassword(string email);
+        Task<Result<string>> ResetPassword(string passwordResetToken, string newPassword);
     }
 }
