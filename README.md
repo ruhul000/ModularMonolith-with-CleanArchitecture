@@ -28,6 +28,9 @@ src
  │  ├─ ControlHub.API.csproj
  │  ├─ ControlHub.API.csproj.user
  │  └─ ControlHub.API.http
+ ├─ ControlHub.Scripts
+ │  ├─ DBScript.sql
+ │  ├─ Seed.sql
  ├─ ControlHub.Modules
  │  ├─ Common
  │  │  └─ Helper
