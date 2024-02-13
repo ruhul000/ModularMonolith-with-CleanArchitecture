@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Domain", "Contro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAccess.Infrastructure", "ControlHub.Modules\UserAccess\UserAccess.Infrustracture\UserAccess.Infrastructure.csproj", "{74FE1BC9-BCD0-4D79-8BBC-27310E7A8493}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ControlHub.Script", "ControlHub.Script", "{D87EE72A-9A82-4860-98C8-7D73E70875C3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ControlHub.Scripts", "ControlHub.Scripts", "{D87EE72A-9A82-4860-98C8-7D73E70875C3}"
 	ProjectSection(SolutionItems) = preProject
 		ControlHub.Script\DBScript.sql = ControlHub.Script\DBScript.sql
 		ControlHub.Script\Seed.sql = ControlHub.Script\Seed.sql
