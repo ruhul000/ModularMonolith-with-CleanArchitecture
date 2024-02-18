@@ -9,6 +9,6 @@ namespace UserAccess.Application.Services
         Task<AuthInformation> RefreshToken(AuthInformation authInfo);
         Task<Result<string>> VerifyEmailAddress(string verificationToken);
         Task<Result<string>> ForgotPassword(string email);
-        Task<Result<string>> ResetPassword(string passwordResetToken, string newPassword);
+        Task<Result<string>> ResetPassword(string email, string resetCode, string newPassword);
     }
 }

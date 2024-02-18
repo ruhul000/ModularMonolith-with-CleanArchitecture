@@ -55,7 +55,7 @@ namespace UserAccess.Application.Services
                 jwtSettings.Issuer,
                 jwtSettings.Audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddSeconds(5),
                 signingCredentials: signIn
             );
 

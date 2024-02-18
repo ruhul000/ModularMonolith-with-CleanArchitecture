@@ -40,6 +40,35 @@ namespace Helper.Services
                 mail.Dispose();
             }
 
+            //// SMTP server settings
+            //string smtpServer = "mail.dotlogic.xyz";
+            //int port = 465; // SMTP port (e.g., 587 for TLS)
+            //bool enableSsl = true; // Set to true if using SSL/TLS
+            //string userName = "noreply.controlhub@dotlogic.xyz"; // Your email address
+            //string password = "noreply.controlhub.2024"; // Your email password
+
+            //// Sender and recipient
+            //string from = "noreply.controlhub@dotlogic.xyz";
+
+            //try
+            //{
+            //    using (var client = new SmtpClient(smtpServer, port))
+            //    {
+            //        client.EnableSsl = enableSsl;
+            //        client.Credentials = new NetworkCredential(userName, password);
+            //        client.Timeout = 100000;
+            //        using (var message = new MailMessage(from, to, subject, body))
+            //        {
+            //            client.Send(message);
+            //            Console.WriteLine("Email sent successfully.");
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Failed to send email: {ex.Message}");
+            //}
+
         }
     }
 }

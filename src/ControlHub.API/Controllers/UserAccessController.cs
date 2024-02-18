@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Serilog;
@@ -7,8 +9,9 @@ using UserAccess.Domain.Models;
 
 namespace ControlHub.API.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("api/v{version:apiVersion}")]
+    [Route("api/v{version:apiVersion}/UserAccess")]
     [ApiVersion("1")]
     public class UserAccessController : ControllerBase
     {
@@ -20,6 +23,7 @@ namespace ControlHub.API.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         [HttpPost("Register")]
         [MapToApiVersion("1")]
         public async Task<ActionResult> Registration(UserRequest userRequest)
@@ -37,6 +41,7 @@ namespace ControlHub.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         [MapToApiVersion("1")]
         public async Task<ActionResult> UserLogin(UserLoginRequest userLoginRequest)
@@ -77,56 +82,52 @@ namespace ControlHub.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("VerifyEmail")]
+        [AllowAnonymous]
+        [HttpPost("VerifyEmail")]
         [MapToApiVersion("1")]
-        public async Task<ActionResult> VerifyEmailAddress(string verificationToken)
+        public async Task<ActionResult> VerifyEmailAddress([FromBody] VerifyEmailRequest request)
         {
-            var result = await _userService.VerifyEmailAddress(verificationToken);
+            var result = await _userService.VerifyEmailAddress(request.Token);
 
             if (result.IsFailure)
             {
-
                 _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
-
                 return BadRequest(result);
             }
 
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("ForgotPassword")]
         [MapToApiVersion("1")]
-        public async Task<ActionResult> ForgotPassword(string email)
+        public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            var result = await _userService.ForgotPassword(email);
+            var result = await _userService.ForgotPassword(request.Email);
 
             if (result.IsFailure)
             {
-
                 _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
-
                 return BadRequest(result);
             }
 
             return Ok(result);
         }
 
-        [HttpGet("ResetPassword")]
+        [AllowAnonymous]
+        [HttpPost("ResetPassword")]
         [MapToApiVersion("1")]
-        public async Task<ActionResult> ResetPassword(string passwordResetToken, string newPassword)
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            var result = await _userService.ResetPassword(passwordResetToken, newPassword);
+            var result = await _userService.ResetPassword(request.Email, request.ResetCode, request.NewPassword);
 
             if (result.IsFailure)
             {
-
                 _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
-
                 return BadRequest(result);
             }
 
             return Ok(result);
         }
-
     }
 }

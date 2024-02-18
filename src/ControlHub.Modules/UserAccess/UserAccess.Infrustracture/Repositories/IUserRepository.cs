@@ -10,7 +10,7 @@ namespace UserAccess.Infrastructure.Repositories
         Task<UserDto?> GetById(int id);
         Task<UserDto?> GetByUserName(string username);
         Task<UserDto?> GetUserByVerificationToken(string verificationToken);
-        Task<UserDto?> GetUserByPasswordResetToken(string passwordResetToken);
+        Task<UserDto?> GetUserByEmailAndResetCode(string email, string resetCode);
         void Add(UserDto user);
         void Update(UserDto userDto);
     }

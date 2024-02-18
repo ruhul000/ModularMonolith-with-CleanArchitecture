@@ -28,8 +28,8 @@ namespace UserAccess.Infrastructure.Repositories
         public async Task<UserDto?> GetUserByVerificationToken(string verificationToken)
             => await _context.Users.FirstOrDefaultAsync(obj => obj.VerificationToken == verificationToken);
 
-        public async Task<UserDto?> GetUserByPasswordResetToken(string passwordResetToken)
-         => await _context.Users.FirstOrDefaultAsync(obj => obj.PasswordResetToken == passwordResetToken);
+        public async Task<UserDto?> GetUserByEmailAndResetCode(string email, string resetCode)
+         => await _context.Users.FirstOrDefaultAsync(obj => obj.Email == email && obj.PasswordResetToken == resetCode);
 
         public async void Add(UserDto userDto)
         {

@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-public class Result<T>
+﻿public class Result<T>
 {
     private Result(bool isSuccess, Error error, T data)
     {

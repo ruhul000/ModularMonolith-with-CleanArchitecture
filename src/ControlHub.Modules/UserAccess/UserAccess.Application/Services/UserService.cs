@@ -2,6 +2,7 @@
 using FluentValidation;
 using Helper.Extensions;
 using Helper.Services;
+using Helper.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -65,9 +66,10 @@ namespace UserAccess.Application.Services
 
             if (await _uowRepository.SaveAsync())
             {
-                var verifyEmailAddressURI = BuildAbsoluteURI(VERIFY_EMAIL_ADDRESS_ROUTE, $"?verificationToken={userDto.VerificationToken}");
+                var clientSettings = _configuration.GetSection("ClientSettings").Get<ClientSettings>();
+                var verifyEmailAddressURI = clientSettings?.BaseUrl + clientSettings?.VerifyEmailUrl + $"?verificationToken={userDto.VerificationToken}";
 
-                // Send email with email verification link link
+                // Send email with email verification link
                 var forgotEmailBody = $"Please use the following link to verify your email address: {verifyEmailAddressURI}";
                 var to = userDto.Email;
                 var subject = "Verify Email - ControlHubApp";
@@ -185,7 +187,8 @@ namespace UserAccess.Application.Services
 
             if (await _uowRepository.SaveAsync())
             {
-                var resetPasswordUri = BuildAbsoluteURI(RESET_PASSWORD_ROUTE, $"?passwordResetToken={userDto.PasswordResetToken}");
+                var clientSettings = _configuration.GetSection("ClientSettings").Get<ClientSettings>();
+                var resetPasswordUri = clientSettings?.BaseUrl + clientSettings?.ResetPasswordUrl + $"?passwordResetToken={userDto.PasswordResetToken}";
 
                 // Send email with reset password link
                 var forgotEmailBody = $"Please use the following link to reset your password: {resetPasswordUri}\r\nThis link will expire within an hour";
@@ -199,9 +202,9 @@ namespace UserAccess.Application.Services
 
             return Result<string>.Failure(new Error("ForgotPassword", "Something went wrong! Please try again."));
         }
-        public async Task<Result<string>> ResetPassword(string passwordResetToken, string newPassword)
+        public async Task<Result<string>> ResetPassword(string email, string resetCode, string newPassword)
         {
-            var userDto = await _uowRepository.UserRepository.GetUserByPasswordResetToken(passwordResetToken);
+            var userDto = await _uowRepository.UserRepository.GetUserByEmailAndResetCode(email, resetCode);
 
             if (userDto == null || userDto?.IsDeleted == true)
             {
@@ -230,10 +233,11 @@ namespace UserAccess.Application.Services
         public async Task<bool> ResendVerificationToken(UserDto userDto)
         {
             userDto.VerificationToken = _authenticationService.GenerateUniqueToken();
-           
 
             // Send email with email verification link link
-            var verifyEmailAddressURI = BuildAbsoluteURI(VERIFY_EMAIL_ADDRESS_ROUTE, $"?verificationToken={userDto.VerificationToken}");
+            var clientSettings = _configuration.GetSection("ClientSettings").Get<ClientSettings>();
+            var verifyEmailAddressURI = clientSettings?.BaseUrl + clientSettings?.VerifyEmailUrl + $"?verificationToken={userDto.VerificationToken}";
+
             var forgotEmailBody = $"Please use the following link to verify your email address: {verifyEmailAddressURI}";
             var to = userDto.Email;
             var subject = "Verify Email - ControlHubApp";
@@ -289,16 +293,6 @@ namespace UserAccess.Application.Services
             }
 
             return await _uowRepository.SaveAsync();
-        }
-        private string BuildAbsoluteURI(string route, string queryString)
-        {
-            return UriHelper.BuildAbsolute(
-                   _httpContextAccessor.HttpContext.Request.Scheme,
-                   _httpContextAccessor.HttpContext.Request.Host,
-                   _httpContextAccessor.HttpContext.Request.PathBase,
-                   route,
-                   new QueryString(queryString)
-               );
         }
 
     }
