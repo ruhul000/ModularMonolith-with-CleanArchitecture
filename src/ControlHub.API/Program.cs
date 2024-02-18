@@ -100,11 +100,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// Default Policy
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5001")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowAnyOrigin();
+
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -115,6 +128,8 @@ app.UseSwaggerUI(options =>
             description.GroupName.ToUpperInvariant());
     }
 });
+
+
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
