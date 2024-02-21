@@ -3,6 +3,37 @@
 
 ControlHub is a modular monolithic architecture project built with C#, .NET 8, MSSQL, Azure, and Git Actions.
 
+### **TOOLS, TECHNOLOGIES AND DESIGN PATTERN USED** 
+1. .Net 8
+2. Open API - Swagger
+3. Entity Framework Core
+4. Middleware
+5. Error Handling
+6. Auto Mapper
+7. Factory Pattern
+8. Repository Pattern
+9. Result Pattern
+10. API versioning
+11. Fluent Validation
+12. Dependency Injection (DI)
+13. Structured Logging using Serilog
+14. CORS (Cross-Origin Resource Sharing)
+15. JWT Authentication and Authorization
+16. Global Exception Handling Middleware 
+
+### **NUGET PACKAGES** 
+1. Newtonsoft.Json
+2. Serilog.AspNetCore
+3. Microsoft.Extensions.Logging
+4. Swashbuckle.AspNetCore
+5. Microsoft.EntityFrameworkCore
+6. Microsoft.EntityFrameworkCore.SqlServer
+7. Microsoft.AspNetCore.Mvc.Versioning
+8. Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer
+9. AutoMapper.Extensions.Microsoft.DependencyInjection
+10. Microsoft.AspNetCore.Authentication.JwtBearer
+11. FluentValidation.DependencyInjectionExtensions
+
 #### **PROJECT STRUCTURE**
 The project is structured into the following main components:
 
@@ -70,7 +101,7 @@ src
  │     │  │  ├─ UserRequest.cs
  │     │  │  └─ UserResposne.cs
  │     │  └─ DependencyInjection.cs
- │     └─ UserAccess.Infrustracture
+ │     └─ UserAccess.Infrastructure
  │        ├─ Repositories
  │        │  ├─ IRefreshTokenRepository.cs
  │        │  ├─ IUnitOfWork.cs
