@@ -1,5 +1,5 @@
 # ModularMonolith-with-CleanArchitechture
-![ControlHub API](https://github.com/ruhul000/ControlHub.API/assets/38735317/76d26efe-d5c5-44e7-be43-8bd18f3dcf36)
+![Control Hub API](https://github.com/ruhul000/ModularMonolith-with-CleanArchitecture/assets/38735317/1d3eaf38-e876-4e86-94f2-0bdf33adb1a6)
 
 ControlHub is a modular monolithic architecture project built with C#, .NET 8, MSSQL, Azure, and Git Actions.
 
