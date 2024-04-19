@@ -20,7 +20,8 @@ ControlHub is a modular monolithic architecture project built with C#, .NET 8, M
 14. Structured Logging using Serilog
 15. CORS (Cross-Origin Resource Sharing)
 16. JWT Authentication and Authorization
-17. Global Exception Handling Middleware 
+17. Global Exception Handling Middleware
+18. OpenID - Google Authentication
 
 ### **NUGET PACKAGES** 
 1. Newtonsoft.Json
